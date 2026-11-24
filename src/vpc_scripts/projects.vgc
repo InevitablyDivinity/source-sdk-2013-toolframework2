@@ -90,6 +90,11 @@ $Project "qc_eyes"
 	"utils\qc_eyes\qc_eyes.vpc" [$WINDOWS]
 }
 
+$Project "sampletool"
+{
+	"sampletool\sampletool.vpc"
+}
+
 $Project "serverplugin_empty"
 {
 	"utils\serverplugin_sample\serverplugin_empty.vpc"
@@ -103,6 +108,11 @@ $Project "tgadiff"
 $Project "tier1"
 {
 	"tier1\tier1.vpc"
+}
+
+$Project "toolframework2"
+{
+	"toolframework2\toolframework2.vpc"
 }
 
 $Project "vbsp"

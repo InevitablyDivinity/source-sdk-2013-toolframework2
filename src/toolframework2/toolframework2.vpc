@@ -1,0 +1,41 @@
+//-----------------------------------------------------------------------------
+//	TOOLFRAMEWORK2.VPC
+//
+//	Project Script
+//-----------------------------------------------------------------------------
+
+$Macro SRCDIR		".."
+
+$Include "$SRCDIR\vpc_scripts\source_lib_base.vpc"
+
+$Configuration
+{
+	$Compiler
+	{
+		$PreprocessorDefinitions		"$BASE;TOOLFRAMEWORK2_STATIC_LIB"
+	}
+}
+
+$Project "toolframework2"
+{
+	$Folder	"Source Files"
+	{
+		$File "toolframework2.cpp"
+		$File "hook.cpp"
+		$File "studiomodel.cpp"
+		$File "particle_parse.cpp"
+		$File "shaderdevice_hooks.cpp" [$LINUX]
+	}
+
+	$Folder	"Header Files"
+	{
+		$File "hook.h"
+
+		$Folder	"Public Header Files"
+		{
+			$File "$SRCDIR/public/toolframework2/studiomodel.h"
+			$File "$SRCDIR/public/toolframework2/particle_parse.h"
+			$File "$SRCDIR/public/toolframework2/toolframework2.h"
+		}
+	}
+}

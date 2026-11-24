@@ -74,3 +74,11 @@ $Group "dedicated"
 	"tier1"
 }
 
+$Group "tools"
+{
+	"tier1"
+	"mathlib"
+	"sampletool"
+	"toolframework2"
+}
+
