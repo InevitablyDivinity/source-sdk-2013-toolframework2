@@ -100,6 +100,7 @@ Debug_*/
 *.vpc_cache
 
 *_nut.h
+*_moc.cpp
 
 __vpc__/
 _vpc_/
@@ -134,6 +135,7 @@ x86/
 [Aa][Rr][Mm]64/
 bld/
 [Bb]in/
+!src/thirdparty/qt-6.9/sdk/*/bin/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/

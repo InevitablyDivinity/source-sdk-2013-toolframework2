@@ -161,5 +161,3 @@ void CParticleViewWindow::wheelEvent( QWheelEvent *ev )
 	ev->accept();
 	requestUpdate();
 }
-
-#include "particle_view_window.h.moc"

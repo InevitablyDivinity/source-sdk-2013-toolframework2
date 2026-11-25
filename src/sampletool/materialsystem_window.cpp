@@ -95,5 +95,3 @@ void CMaterialSystemSurface::resizeEvent( QResizeEvent *ev )
 {
 	requestUpdate();
 }
-
-#include "materialsystem_window.h.moc"

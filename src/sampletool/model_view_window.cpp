@@ -164,5 +164,3 @@ void CModelViewWindow::wheelEvent( QWheelEvent *ev )
 	ev->accept();
 	requestUpdate();
 }
-
-#include "model_view_window.h.moc"

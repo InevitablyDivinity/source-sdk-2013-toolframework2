@@ -5,11 +5,10 @@
 //-----------------------------------------------------------------------------
 
 $Macro SRCDIR		".."
-$Macro GENERATED_MOC_DIR "."
 $Macro OUTBINDIR	"$SRCDIR\..\game\bin"
 
 $Include "$SRCDIR\vpc_scripts\source_exe_base.vpc"
-$Include "$SRCDIR\thirdparty\qt-6.12\qt-6.12.vpc"
+$Include "$SRCDIR\thirdparty\qt-6.9\qt-6.9.vpc"
 
 $Configuration
 {
@@ -23,23 +22,49 @@ $Project "sampletool"
 {
 	$Folder	"Source Files"
 	{
-		$File "sampletool.cpp"
+		$File "sampletool.cpp" \
+		      "materialsystem_window.cpp" \
+		      "model_view_window.cpp" \
+		      "particle_view_window.cpp" \
+		      "ui.cpp"
+		{
+			$Configuration
+			{
+				$Compiler
+				{
+					$AdditionalOptions "$BASE $QT_CXXFLAGS" [$WINDOWS]
+				}
+			}
+		}
 
-		$File "materialsystem_window.cpp"
-		$File "materialsystem_window.h"
-		$DynamicFile "materialsystem_window.h.moc"
+		$DynamicFile "materialsystem_window_moc.cpp" \
+		             "model_view_window_moc.cpp" \
+		             "particle_view_window_moc.cpp" \
+		             "ui_moc.cpp"
+		{
+			$Configuration
+			{
+				$Compiler
+				{
+					$AdditionalOptions "$BASE $QT_CXXFLAGS" [$WINDOWS]
+				}
+			}
+		}
 
-		$File "model_view_window.cpp"
-		$File "model_view_window.h"
-		$DynamicFile "model_view_window.h.moc"
-
-		$File "particle_view_window.cpp"
-		$File "particle_view_window.h"
-		$DynamicFile "particle_view_window.h.moc"
-
-		$File "ui.cpp"
-		$File "ui.h"
-		$DynamicFile "ui.h.moc"
+		$File "materialsystem_window.h" \
+		      "model_view_window.h" \
+		      "particle_view_window.h" \
+		      "ui.h"
+		{
+			$Configuration
+			{
+				$CustomBuildStep
+				{
+					$CommandLine "$MOC_COMMAND"
+					$Outputs "$MOC_OUTPUT"
+				}
+			}
+		}
 
 		$Folder	"Common Files"
 		{

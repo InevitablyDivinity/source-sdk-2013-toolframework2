@@ -1,0 +1,64 @@
+//-----------------------------------------------------------------------------
+//	QT-6.9.VPC
+//
+//	Project Script
+//-----------------------------------------------------------------------------
+
+$Macro QT_ROOT "$SRCDIR\thirdparty\qt-6.9\sdk\$PLATFORM"
+$Macro MOC_COMMAND "$QT_ROOT\bin\moc $(InputPath) -o $(InputName)_moc.cpp"
+$Macro MOC_OUTPUT "$(InputName)_moc.cpp"
+$Macro QT_CXXFLAGS "/std:c++17 /permissive- /Zc:twoPhase-" [$WINDOWS]
+
+$Configuration
+{
+	$Compiler
+	{
+		$AdditionalIncludeDirectories	"$BASE;$QT_ROOT\include;$QT_ROOT\include\QtCore;$QT_ROOT\include\QtGui;$QT_ROOT\include\QtWidgets"
+		$PreprocessorDefinitions		"$BASE;QT_GUI_LIB;QT_CORE_LIB;QT_WIDGETS_LIB"
+		$GCC_ExtraCompilerFlags			"$BASE -std=c++17" [$POSIX]
+	}
+
+	$Linker
+	{
+		// Link tier0 first because Qt needs our allocators during static object initization!
+		$AdditionalDependencies			"$BASE;$LIBPUBLIC/tier0.lib" [$WINDOWS]
+	}
+}
+
+$Project
+{
+	$Folder "Link Libraries"
+	{
+		$ImpLib	"$QT_ROOT\lib\Qt6Core" [$WINDOWS]
+		$ImpLib	"$QT_ROOT\lib\Qt6Gui" [$WINDOWS]
+		$ImpLib	"$QT_ROOT\lib\Qt6Widgets" [$WINDOWS]
+		$ImpLib	"$OUTBINDIR\Qt6" [$POSIX]
+	}
+
+	$Folder "Qt Runtime"
+	{
+		$File "$QT_ROOT\bin\Qt6Core.dll" [$WINDOWS]
+		{
+			$Configuration
+			{
+				$CustomBuildStep
+				{
+					$CommandLine	"xcopy /s /y /q $QT_ROOT\bin\*.dll $OUTBINDIR\ >nul"
+					$Outputs		"$OUTBINDIR\Qt6Core.dll"
+				}
+			}
+		}
+
+		$File "$QT_ROOT\lib\libQt6Core.so.6" [$POSIX]
+		{
+			$Configuration
+			{
+				$CustomBuildStep
+				{
+					$CommandLine	"cp -r $QT_ROOT\lib\. $OUTBINDIR\"
+					$Outputs		"$OUTBINDIR\libQt6.so"
+				}
+			}
+		}
+	}
+}

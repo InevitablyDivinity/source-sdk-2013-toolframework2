@@ -65,6 +65,3 @@ CMainWindow::CMainWindow( QWidget *pParent ) : QWidget( pParent )
 		m_sequencePicker->addItem( s.pszLabel() );
 	}
 }
-
-
-#include "ui.h.moc"
