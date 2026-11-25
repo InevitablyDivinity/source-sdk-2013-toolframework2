@@ -1,73 +1,48 @@
 #include "hook.h"
-#ifdef __unix__
+#ifdef _WIN32
+#include "winlite.h"
+#else
 #include <unistd.h>
 #include <errno.h>
 #include <sys/mman.h>
 #endif
 
-#if 0
-inline uintptr_t *GetVirtualTable( void *pObject )
+static bool WriteProtectedPointer( void **ppTarget, void *pValue )
 {
-	uintptr_t *pClassTable = reinterpret_cast<uintptr_t *>( pObject );
-	uintptr_t *pVirtualTable = reinterpret_cast<uintptr_t *>( *pClassTable );
-	return pVirtualTable;
-}
-#endif
+#ifdef _WIN32
+	DWORD nOldProtect;
+	if ( !VirtualProtect( ppTarget, sizeof( void * ), PAGE_EXECUTE_READWRITE, &nOldProtect ) )
+	{
+		Error( "Error: %lu\n", GetLastError() );
+		return false;
+	}
 
-#ifdef __unix__
-bool VirtualUnprotect( void *pAddress, size_t length )
-{
-	if ( mprotect( pAddress, length, PROT_READ|PROT_WRITE|PROT_EXEC ) < 0 )
+	*ppTarget = pValue;
+
+	VirtualProtect( ppTarget, sizeof( void * ), nOldProtect, &nOldProtect );
+#else
+	const size_t iPageSize = getpagesize();
+	void *pPageAddress = GetPageAddress( ppTarget, iPageSize );
+
+	if ( mprotect( pPageAddress, iPageSize, PROT_READ|PROT_WRITE|PROT_EXEC ) < 0 )
 	{
 		Error( "Error: %d\n", errno );
 		return false;
 	}
 
-	return true;
-}
+	*ppTarget = pValue;
 
-bool VirtualProtect( void *pAddress, size_t length )
-{
-	if ( mprotect( pAddress, length, PROT_READ|PROT_EXEC ) < 0 )
-	{
-		Error( "Error: %d\n", errno );
-		return false;
-	}
-	
-	return true;
-}
-
-inline size_t GetPageSize()
-{
-	return getpagesize();
-}
+	mprotect( pPageAddress, iPageSize, PROT_READ|PROT_EXEC );
 #endif
+	return true;
+}
 
 void HookVirtualFunction( void **ppVirtualFunction, void *pReplacement )
 {
-	const size_t iPageSize = GetPageSize();
-
-	void *pPageAddress = GetPageAddress( ppVirtualFunction, iPageSize );
-
-	if ( !VirtualUnprotect( pPageAddress, iPageSize ) )
-		return;
-
-	*ppVirtualFunction = pReplacement;
-
-	VirtualProtect( pPageAddress, iPageSize );
+	WriteProtectedPointer( ppVirtualFunction, pReplacement );
 }
 
 void HookVirtualFunction( void *pObject, int index, void *pReplacement )
 {
-	const size_t iPageSize = GetPageSize();
-
-	void **ppMethod = GetVirtualFunctionPtr( pObject, index );
-	void *pPageAddress = GetPageAddress( ppMethod, iPageSize );
-
-	if ( !VirtualUnprotect( pPageAddress, iPageSize ) )
-		return;
-
-	*ppMethod = pReplacement;
-
-	VirtualProtect( pPageAddress, iPageSize );
+	WriteProtectedPointer( GetVirtualFunctionPtr( pObject, index ), pReplacement );
 }

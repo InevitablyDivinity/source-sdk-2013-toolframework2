@@ -18,6 +18,9 @@
 #include "tier2/tier2.h"
 #include "tier3/tier3.h"
 #include <QApplication>
+#ifdef _WIN32
+#include "winlite.h"
+#endif
 
 #if defined( USE_SDL )
 void *CreateSDLMgr(); // exported from appframework
@@ -152,8 +155,16 @@ private:
 	CMainWindow *m_pMainWindow;
 };
 
+#ifdef _WIN32
+int __stdcall WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow )
+{
+	CSampleToolApp sampleTool;
+	return AppMain( hInstance, hPrevInstance, lpCmdLine, nCmdShow, &sampleTool );
+}
+#else
 int main( int argc, char *argv[] )
 {
 	CSampleToolApp sampleTool;
 	return AppMain( argc, argv, &sampleTool );
 }
+#endif
